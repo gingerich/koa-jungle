@@ -1,9 +1,9 @@
-import { default as modules, Module } from 'koa-module'
+import modules, { Module } from 'koa-module'
 
 export class CoreModule extends Module {
 
-  get name () {
-    return 'core'
+  constructor (application, config) {
+    super(application, Object.assign({ name: 'core' }, config))
   }
 
   get dirname () {

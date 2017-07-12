@@ -1,18 +1,18 @@
+import common from './envs/common'
+import config from '../lib/config'
+
 const env = process.env.NODE_ENV || 'development'
-const config = require(`./envs/${env}.js`)
+const envConfig = require(`./envs/${env}.js`)
 
-import common from './envs/common.js'
-import nconf from 'nconf'
-
-nconf
+const settings = config()
   .argv()
   .env()
   .overrides({
-    ...config,
+    ...envConfig,
     env
   })
   // .file({ file: `${__dirname}/envs/${env}.json` })
   // .file('common', { file: `${__dirname}/envs/common.json` })
   .defaults(common)
 
-export default nconf
+export default settings

@@ -1,29 +1,33 @@
-import { normalize, resolve } from 'path'
-
-const rootPath = normalize(`${__dirname}/../../..`)
-require('assert')(rootPath === process.cwd(), 'rootPath should match process.cwd()')
+import { normalize } from 'path'
 
 export default {
   app: {
     name: 'koa-jungle'
   },
   paths: {
-    root: process.cwd(),
-    runtime: resolve('dist'),
+    root: normalize(`${__dirname}/../../..`),
     modules: './modules'
   },
-  modules: {
-    enabled: [
-      {
-        name: 'koa-module-auth',
-        config: 'auth'
-      },
-      {
-        name: 'core'
-      }
-    ]
-  },
+  modules: [
+    {
+      name: 'koa-module-socket',
+      config: 'sockets',
+      enabled: true
+    },
+    {
+      name: 'koa-module-auth',
+      config: 'auth',
+      enabled: false
+    },
+    {
+      name: 'core',
+      path: '/status'
+    }
+  ],
   morgan: {
     format: 'combined'
+  },
+  sockets: {
+    io: {}
   }
 }

@@ -1,44 +1,53 @@
-import Koa from 'koa'
-import { Application } from 'koa-module'
+import modules, { Application } from 'koa-module'
 import { resolve } from 'path'
+import nconf from 'nconf'
 
-import config from 'config'
-import logger from 'lib/logger'
+import configuration from '../lib/config'
+import logger from '../lib/logger'
 
 export default class App extends Application {
 
   constructor (opts, engine) {
-    super(null, opts)
-    this.name = opts.name
-
-    this.engine = engine || new Koa()
+    super(opts, engine)
+    this.config = configuration()
 
     // Attach global logger
-    this.log = logger(this.name, config.get('winston'))
-
-    this.modules = {}
+    this.log = logger(this.name, this.get('winston'))
 
     // this.bottle.service('config', function () { return config })
   }
 
-  context () {
+  modules (path, ...moduleList) {
+    this.engine.use(modules(this, { path, modules: moduleList }))
     return this
   }
 
-  // get config () {
-  //   return config.get()
-  // }
+  configure (config) {
+    if (config instanceof nconf.Provider) {
+      this.config = config
+      return this
+    }
 
-  // set config () {
+    this.config = configuration()
+    if (typeof config === 'object') {
+      this.config.overrides(config)
+    } else if (typeof config === 'function') {
+      config(this.config)
+    }
 
-  // }
+    return this
+  }
 
   get (key) {
-    return config.get(key)
+    return this.config.get(key)
   }
 
   path (path) {
-    return resolve(config.get('paths:runtime'), path)
+    return resolve(this.get('paths:root'), this.get('paths:runtime'), path)
+  }
+
+  load () {
+    return this
   }
 
 }
