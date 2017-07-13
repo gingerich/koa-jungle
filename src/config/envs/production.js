@@ -1,5 +1,5 @@
 export default {
   paths: {
-    runtime: './dist',
+    runtime: './build',
   }
 }

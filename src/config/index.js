@@ -1,18 +1,21 @@
-import common from './envs/common'
-import config from '../lib/config'
+import nconf from 'nconf'
+import defaults from './envs/default'
 
 const env = process.env.NODE_ENV || 'development'
-const envConfig = require(`./envs/${env}.js`)
 
-const settings = config()
-  .argv()
-  .env()
-  .overrides({
-    ...envConfig,
-    env
-  })
-  // .file({ file: `${__dirname}/envs/${env}.json` })
-  // .file('common', { file: `${__dirname}/envs/common.json` })
-  .defaults(common)
+function Config () {
+  this.store = new nconf.Provider()
+    .argv()
+    .env()
+    .overrides(require(`./envs/${env}.js`))
+    // .file({ file: `${__dirname}/envs/${env}.json` })
+    // .file('defaults', { file: `${__dirname}/envs/defaults.json` })
+    .defaults(defaults)
+}
 
-export default settings
+Config.prototype.get = function get (key) {
+  return this.store.get(key)
+}
+
+export default new Config()
+export { Config as Provider }

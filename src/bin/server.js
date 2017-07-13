@@ -1,15 +1,15 @@
-import jungle from '../index'
+import Koach from 'koach'
+import Jungle from '../index'
 import config from '../config'
 
-function main () {
-  jungle()(config.get('app')).configure(config)
-    .start(config.get('http:hostname'), config.get('http:port'))
-}
+Koach.registerComponent('Jungle', () => Jungle)
+
+Koach.config(config.get())
+
+Koach.listen(config.get('http:port'), config.get('http:hostname'))
 
 // Catch unhandled rejections globally
 process.on('unhandledRejection', (reason, promise) => {
   console.log('Unhandled Rejection at: Promise ', promise, ' reason: ', reason)
   throw reason
 })
-
-main()

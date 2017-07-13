@@ -1,15 +1,17 @@
-import modules, { Module } from 'koa-module'
+import { Component, Router } from 'koach'
+import StatusHandler from './controllers/status'
+import ErrorHandler from './middleware/error'
 
-export class CoreModule extends Module {
+export default class CoreModule extends Component {
 
-  constructor (application, config) {
-    super(application, Object.assign({ name: 'core' }, config))
+  componentWillMount () {
+    const { context: app } = this
+    app.use(ErrorHandler.compose())
   }
 
-  get dirname () {
-    return __dirname
+  compose () {
+    return Router.spec()
+      .get('/status', StatusHandler.spec())
   }
 
 }
-
-export default modules.register((app, config) => new CoreModule(app, config))
