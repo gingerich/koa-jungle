@@ -1,5 +1,6 @@
 import { Component, Module } from 'koach'
 import { resolve } from 'path'
+import { Logger, transports } from 'winston'
 
 import body from 'koa-bodyparser'
 import compress from 'koa-compress'
@@ -13,6 +14,16 @@ import Socket from 'koach-socket'
 import Core from './modules/core'
 
 export default class Jungle extends Component {
+
+  constructor (config, context) {
+    super(config, context)
+
+    this.context.attach('log', () => {
+      const opts = this.config('winston')
+      return new Logger(opts)
+        .add(transports.Console, opts)
+    })
+  }
 
   path (path) {
     return resolve(this.config('paths.root'), this.config('paths.runtime'), path)
