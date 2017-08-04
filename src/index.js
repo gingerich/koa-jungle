@@ -9,9 +9,12 @@ import etag from 'koa-etag'
 import favicon from 'koa-favicon'
 import helmet from 'koa-helmet'
 import morgan from 'koa-morgan'
+import responseTime from 'koa-response-time'
 import Socket from 'koach-socket'
 
 import Core from './modules/core'
+import Auth from './modules/auth'
+import Users from './modules/user'
 
 export default class Jungle extends Component {
 
@@ -32,6 +35,8 @@ export default class Jungle extends Component {
   compose () {
     return Module.spec()
 
+      .use(responseTime())
+
       // HTTP request logging
       .use(morgan(this.config('morgan.format'), this.config('morgan.options')))
 
@@ -50,10 +55,14 @@ export default class Jungle extends Component {
       // Serve static favicon image
       .use(favicon(`${this.config('paths.root')}/static/favicon.ico`))
 
-      .use(Core.spec(this.config('core')))
-
       // Enable websockets
       .use(Socket.spec(this.config('sockets')))
+
+      .use(Core.spec(this.config('core')))
+
+      .use(Auth.spec(this.config('auth')))
+
+      .use(Users.spec())
 
       .use(this.config.subcomponents)
   }

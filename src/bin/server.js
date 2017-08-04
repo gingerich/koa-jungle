@@ -1,5 +1,5 @@
 import Koach from 'koach'
-import Jungle from '../index'
+import Jungle from '../'
 import config from '../config'
 
 Koach.registerComponent('Jungle', () => Jungle)

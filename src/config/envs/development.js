@@ -11,7 +11,10 @@ export default {
   },
   auth: {
     jwt: {
-      secretOrKey: 'secret'
+      secret: 'supersecret',
+      token: {
+        expiresIn: '7d'
+      }
     }
   }
 }
